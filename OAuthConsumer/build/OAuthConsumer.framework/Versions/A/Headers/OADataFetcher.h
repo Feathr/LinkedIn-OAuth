@@ -33,7 +33,8 @@
     OAMutableURLRequest *request;
     NSURLResponse *response;
     NSURLConnection *connection;
-    NSMutableData *responseData;
+    NSError *error;
+    NSData *responseData;
     id delegate;
     SEL didFinishSelector;
     SEL didFailSelector;
