@@ -148,7 +148,8 @@ const NSUInteger kRDLinkedInMaxStatusLength = 140;
 #pragma mark profile methods
 
 - (RDLinkedInConnectionID *)profileForCurrentUser {
-  NSURL* url = [NSURL URLWithString:[kAPIBaseURL stringByAppendingString:@"/v1/people/~"]];
+  NSURL* url = [NSURL URLWithString:[kAPIBaseURL stringByAppendingString:@"/v1/people/~:(first-name,last-name,headline,picture-url,public-profile-url)"]];
+  RDLOG(@"Getting profile for current user");
   return [self sendAPIRequestWithURL:url HTTPMethod:@"GET" body:nil];
 }
 
