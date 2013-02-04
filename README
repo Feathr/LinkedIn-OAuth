@@ -1,1 +1,7 @@
 This project is an amalagamation of two other projects - a LinkedIn client library and an OAuth consumer framework - with the goal of having an easy-to-use device- and simulator- compatible LinkedIn library.
+
+Ideally, this would simply be a combination of two submodules, however there are class conflicts and the OAuth framework must be modified to include a property that the aging LinkedIn library expects.
+
+Sources:
+ * LinkedIn library: https://github.com/ResultsDirect/LinkedIn-iPhone
+ * OAuth Framework: https://github.com/JoseExposito/oauthconsumer (modified to add a property that the LinkedIn library expects)
