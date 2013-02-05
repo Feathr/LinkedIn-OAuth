@@ -5,3 +5,6 @@ Ideally, this would simply be a combination of two submodules, however there are
 Sources:
  * LinkedIn library: https://github.com/ResultsDirect/LinkedIn-iPhone
  * OAuth Framework: https://github.com/JoseExposito/oauthconsumer (modified to add a property that the LinkedIn library expects)
+
+Requirements:
+ * libxml2 framework
