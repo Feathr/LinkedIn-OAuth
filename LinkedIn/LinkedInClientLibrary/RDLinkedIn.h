@@ -11,4 +11,5 @@
 #import "RDLinkedInTypes.h"
 #import "RDLinkedInEngine.h"
 #import "RDLinkedInAuthorizationController.h"
+#import "RDLinkedInAuthorizationView.h"
 #import "OAToken+storage.h"
