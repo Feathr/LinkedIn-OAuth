@@ -2,9 +2,16 @@ This project is an amalagamation of two other projects - a LinkedIn client libra
 
 Ideally, this would simply be a combination of two submodules, however there are class conflicts and the OAuth framework must be modified to include a property that the aging LinkedIn library expects.
 
+Requirements:
+ * libxml2 framework
+
+Installation:
+ 1. git clone git@github.com:Feathr/LinkedIn-OAuth.git
+ 2. Add LinkedInClientLibrary and OAuthConsumer.framework to the XCode project
+ 3. Under Build Phases > Compile sources, add the "-fno-objc-arc" compiler flag to all of the LinkedIn library files
+ 4. Add libxml2.dylib & OAuthConsumer.framework to Build Phases > Link Binary With Libraries
+ 5. Add "$(SDKROOT)/usr/include/libxml2" to the Header Search Paths in Build Settings
+
 Sources:
  * LinkedIn library: https://github.com/ResultsDirect/LinkedIn-iPhone
  * OAuth Framework: https://github.com/JoseExposito/oauthconsumer (modified to add a property that the LinkedIn library expects)
-
-Requirements:
- * libxml2 framework
