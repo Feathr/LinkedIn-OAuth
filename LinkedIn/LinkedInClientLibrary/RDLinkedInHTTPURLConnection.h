@@ -20,7 +20,7 @@
   RDLinkedInConnectionID* rdIdentifier;
 }
 
-@property (nonatomic, readonly) RDLinkedInConnectionID* identifier;
+@property (weak, nonatomic, readonly) RDLinkedInConnectionID* identifier;
 @property (nonatomic, readonly) NSURLRequest* request;
 
 - (NSData *)data;

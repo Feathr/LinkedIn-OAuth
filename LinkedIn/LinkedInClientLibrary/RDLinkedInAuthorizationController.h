@@ -17,13 +17,13 @@
 
 
 @interface RDLinkedInAuthorizationController : UIViewController <UIWebViewDelegate> {
-  id<RDLinkedInAuthorizationControllerDelegate> rdDelegate;
+  id<RDLinkedInAuthorizationControllerDelegate> __weak rdDelegate;
   RDLinkedInEngine* rdEngine;
   UINavigationBar*  rdNavBar;
   UIWebView*        rdWebView;
 }
 
-@property (nonatomic, assign)   id<RDLinkedInAuthorizationControllerDelegate> delegate;
+@property (nonatomic, weak)   id<RDLinkedInAuthorizationControllerDelegate> delegate;
 @property (nonatomic, readonly) RDLinkedInEngine* engine;
 @property (nonatomic, readonly) UINavigationBar* navigationBar;
 

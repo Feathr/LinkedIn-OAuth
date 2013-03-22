@@ -16,22 +16,16 @@
 - (id)initWithRequest:(NSURLRequest *)request delegate:(id)delegate {
   self = [super initWithRequest:request delegate:delegate];
   if( self != nil ) {
-    rdRequest = [request retain];
+    rdRequest = request;
     rdData = [[NSMutableData alloc] init];
   }
   return self;
 }
 
-- (void)dealloc {
-  [rdRequest release];
-  [rdData release];
-  [rdIdentifier release];
-  [super dealloc];
-}
 
 - (RDLinkedInConnectionID *)identifier {
   if( !rdIdentifier ) {
-    rdIdentifier = [[[NSProcessInfo processInfo] globallyUniqueString] retain];
+    rdIdentifier = [[NSProcessInfo processInfo] globallyUniqueString];
   }
   return rdIdentifier;
 }

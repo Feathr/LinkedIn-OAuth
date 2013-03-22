@@ -19,7 +19,6 @@ static const char * kUTF8String = "UTF-8";
   if( builder ) {
     [builder addNodeNamed:rootNode content:content];
     req = [builder finish];
-    [builder release];
   }
   return req;
 }
@@ -37,7 +36,7 @@ static const char * kUTF8String = "UTF-8";
     }
     
     if( !success ) {
-      [self autorelease];
+      // [self autorelease];
       return nil;
     }
   }
@@ -47,7 +46,6 @@ static const char * kUTF8String = "UTF-8";
 - (void)dealloc {
   xmlFreeTextWriter(rdWriter);
   xmlBufferFree(rdBuffer);
-  [super dealloc];
 }
 
 - (BOOL)addNodeNamed:(NSString *)nodeName content:(NSString *)content {

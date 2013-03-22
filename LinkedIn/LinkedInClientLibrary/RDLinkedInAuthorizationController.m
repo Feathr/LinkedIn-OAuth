@@ -26,14 +26,14 @@
 
 + (id)authorizationControllerWithEngine:(RDLinkedInEngine *)engine delegate:(id<RDLinkedInAuthorizationControllerDelegate>)delegate {
 	if( engine.isAuthorized ) return nil;
-	return [[[self alloc] initWithEngine:engine delegate:delegate] autorelease];
+	return [[self alloc] initWithEngine:engine delegate:delegate];
 }
 
 - (id)initWithEngine:(RDLinkedInEngine *)engine delegate:(id<RDLinkedInAuthorizationControllerDelegate>)delegate {
   self = [super initWithNibName:nil bundle:nil];
   if( self != nil ) {
     rdDelegate = delegate;
-    rdEngine = [engine retain];
+    rdEngine = engine;
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveRequestToken:) name:RDLinkedInEngineRequestTokenNotification object:rdEngine];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveAccessToken:) name:RDLinkedInEngineAccessTokenNotification object:rdEngine];
@@ -53,10 +53,6 @@
   rdWebView.delegate = nil;
   [rdWebView stopLoading];
   
-  [rdWebView release];
-  [rdNavBar release];
-  [rdEngine release];
-  [super dealloc];
 }
 
 
@@ -65,8 +61,8 @@
   self.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
   
   rdNavBar = [[UINavigationBar alloc] initWithFrame:CGRectZero];
-  [rdNavBar setItems:[NSArray arrayWithObject:[[[UINavigationItem alloc] initWithTitle:@"LinkedIn Authorization"] autorelease]]];
-  rdNavBar.topItem.leftBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancel)] autorelease];
+  [rdNavBar setItems:[NSArray arrayWithObject:[[UINavigationItem alloc] initWithTitle:@"LinkedIn Authorization"]]];
+  rdNavBar.topItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancel)];
   [rdNavBar sizeToFit];
   rdNavBar.frame = CGRectMake(0, 0, self.view.bounds.size.width, rdNavBar.frame.size.height);
   rdNavBar.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleWidth;
@@ -89,10 +85,8 @@
 - (void)viewDidUnload {
   rdWebView.delegate = nil;
   [rdWebView stopLoading];
-  [rdWebView release];
   rdWebView = nil;
   
-  [rdNavBar release];
   rdNavBar = nil;
 }
 

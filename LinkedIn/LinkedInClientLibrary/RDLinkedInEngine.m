@@ -44,7 +44,7 @@ const NSUInteger kRDLinkedInMaxStatusLength = 140;
 @synthesize verifier = rdOAuthVerifier;
 
 + (id)engineWithConsumerKey:(NSString *)consumerKey consumerSecret:(NSString *)consumerSecret delegate:(id<RDLinkedInEngineDelegate>)delegate {
-  return [[[self alloc] initWithConsumerKey:consumerKey consumerSecret:consumerSecret delegate:delegate] autorelease];
+  return [[self alloc] initWithConsumerKey:consumerKey consumerSecret:consumerSecret delegate:delegate];
 }
 
 - (id)initWithConsumerKey:(NSString *)consumerKey consumerSecret:(NSString *)consumerSecret delegate:(id<RDLinkedInEngineDelegate>)delegate {
@@ -59,12 +59,6 @@ const NSUInteger kRDLinkedInMaxStatusLength = 140;
 
 - (void)dealloc {
   rdDelegate = nil;
-  [rdOAuthConsumer release];
-  [rdOAuthRequestToken release];
-  [rdOAuthAccessToken release];
-  [rdOAuthVerifier release];
-  [rdConnections release];
-  [super dealloc];
 }
 
 
@@ -102,13 +96,11 @@ const NSUInteger kRDLinkedInMaxStatusLength = 140;
   
   // check for cached creds
   if( [rdDelegate respondsToSelector:@selector(linkedInEngineAccessToken:)] ) {
-    [rdOAuthAccessToken release];
-    rdOAuthAccessToken = [[rdDelegate linkedInEngineAccessToken:self] retain];
+    rdOAuthAccessToken = [rdDelegate linkedInEngineAccessToken:self];
     if( rdOAuthAccessToken.key && rdOAuthAccessToken.secret ) return YES;
   }
   
   // no valid access token found
-  [rdOAuthAccessToken release];
   rdOAuthAccessToken = nil;
   return NO;
 }
@@ -139,8 +131,8 @@ const NSUInteger kRDLinkedInMaxStatusLength = 140;
 }
 
 - (NSURLRequest *)authorizationFormURLRequest {
-  OAMutableURLRequest *request = [[[OAMutableURLRequest alloc] initWithURL:[NSURL URLWithString:kOAuthAuthorizeURL] consumer:nil token:rdOAuthRequestToken realm:nil signatureProvider:nil] autorelease];
-  [request setParameters: [NSArray arrayWithObject: [[[OARequestParameter alloc] initWithName:@"oauth_token" value:rdOAuthRequestToken.key] autorelease]]];	
+  OAMutableURLRequest *request = [[OAMutableURLRequest alloc] initWithURL:[NSURL URLWithString:kOAuthAuthorizeURL] consumer:nil token:rdOAuthRequestToken realm:nil signatureProvider:nil];
+  [request setParameters: [NSArray arrayWithObject: [[OARequestParameter alloc] initWithName:@"oauth_token" value:rdOAuthRequestToken.key]]];
   return request;
 }
 
@@ -209,11 +201,11 @@ const NSUInteger kRDLinkedInMaxStatusLength = 140;
   RDLOG(@"sending API request to %@", url);
   
   // create and configure the URL request
-  OAMutableURLRequest* request = [[[OAMutableURLRequest alloc] initWithURL:url
+  OAMutableURLRequest* request = [[OAMutableURLRequest alloc] initWithURL:url
                                                                   consumer:rdOAuthConsumer 
                                                                      token:rdOAuthAccessToken 
                                                                      realm:nil
-                                                         signatureProvider:nil] autorelease];
+                                                         signatureProvider:nil];
   [request setHTTPShouldHandleCookies:NO];
   [request setValue:@"text/xml;charset=UTF-8" forHTTPHeaderField:@"Content-Type"];
   if( method ) {
@@ -228,7 +220,7 @@ const NSUInteger kRDLinkedInMaxStatusLength = 140;
   }
   
   // initiate a URL connection with this request
-  RDLinkedInHTTPURLConnection* connection = [[[RDLinkedInHTTPURLConnection alloc] initWithRequest:request delegate:self] autorelease];
+  RDLinkedInHTTPURLConnection* connection = [[RDLinkedInHTTPURLConnection alloc] initWithRequest:request delegate:self];
   if( connection ) {
     [rdConnections setObject:connection forKey:connection.identifier];
   }
@@ -253,13 +245,13 @@ const NSUInteger kRDLinkedInMaxStatusLength = 140;
 }
 
 - (void)sendTokenRequestWithURL:(NSURL *)url token:(OAToken *)token onSuccess:(SEL)successSel onFail:(SEL)failSel {
-  OAMutableURLRequest* request = [[[OAMutableURLRequest alloc] initWithURL:url consumer:rdOAuthConsumer token:token realm:nil signatureProvider:nil] autorelease];
+  OAMutableURLRequest* request = [[OAMutableURLRequest alloc] initWithURL:url consumer:rdOAuthConsumer token:token realm:nil signatureProvider:nil];
 	if( !request ) return;
 	
   [request setHTTPMethod:@"POST"];
 	if( rdOAuthVerifier.length ) token.pin = rdOAuthVerifier;
 	
-  OADataFetcher* fetcher = [[[OADataFetcher alloc] init] autorelease];	
+  OADataFetcher* fetcher = [[OADataFetcher alloc] init];
   [fetcher fetchDataWithRequest:request delegate:self didFinishSelector:successSel didFailSelector:failSel];
 }
 
@@ -275,10 +267,9 @@ const NSUInteger kRDLinkedInMaxStatusLength = 140;
   //RDLOG(@"got request token ticket response: %@ (%lu bytes)", ticket, (unsigned long)[data length]);
   if (!ticket.didSucceed || !data) return;
   
-  NSString *dataString = [[[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding] autorelease];
+  NSString *dataString = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
   if (!dataString) return;
   
-  [rdOAuthRequestToken release];
   rdOAuthRequestToken = [[OAToken alloc] initWithHTTPResponseBody:dataString];
   //RDLOG(@"  request token set %@", rdOAuthRequestToken.key);
   
@@ -294,14 +285,13 @@ const NSUInteger kRDLinkedInMaxStatusLength = 140;
   //RDLOG(@"got access token ticket response: %@ (%lu bytes)", ticket, (unsigned long)[data length]);
   if (!ticket.didSucceed || !data) return;
   
-  NSString *dataString = [[[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding] autorelease];
+  NSString *dataString = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
   if (!dataString) return;
   
   if( rdOAuthVerifier.length && [dataString rangeOfString:@"oauth_verifier"].location == NSNotFound ) {
     dataString = [dataString stringByAppendingFormat:@"&oauth_verifier=%@", rdOAuthVerifier];
   }
   
-  [rdOAuthAccessToken release];
   rdOAuthAccessToken = [[OAToken alloc] initWithHTTPResponseBody:dataString];
   //RDLOG(@"  access token set %@", rdOAuthAccessToken.key);
   
@@ -316,8 +306,7 @@ const NSUInteger kRDLinkedInMaxStatusLength = 140;
 }
 
 - (void)tokenInvalidationSucceeded:(OAServiceTicket *)ticket data:(NSData *)data {
-  OAToken* invalidToken = [rdOAuthAccessToken retain];
-  [rdOAuthAccessToken release];
+  OAToken* invalidToken = rdOAuthAccessToken;
   rdOAuthAccessToken = nil;
   
   NSHTTPCookieStorage* cookieStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage];

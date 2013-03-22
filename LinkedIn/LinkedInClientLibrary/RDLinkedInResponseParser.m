@@ -24,26 +24,18 @@ NSString *const RDLinkedInResponseParserURLKey = @"RDLinkedInResponseParserURLKe
     *results = [parser results];
   }
   
-  [parser release];
   return success;
 }
 
 - (id)initWithXML:(NSData *)xml connection:(RDLinkedInHTTPURLConnection *)connection {
   self = [super init];
   if( self != nil ) {
-    rdXML = [xml retain];
-    rdConnection = [connection retain];
+    rdXML = xml;
+    rdConnection = connection;
   }
   return self;
 }
 
-- (void)dealloc {
-  [rdXML release];
-  [rdConnection release];
-  [rdResults release];
-  [rdError release];
-  [super dealloc];
-}
 
 - (NSError *)genericError {
   return [NSError errorWithDomain:RDLinkedInResponseParserDomain
@@ -63,10 +55,10 @@ NSString *const RDLinkedInResponseParserURLKey = @"RDLinkedInResponseParserURLKe
     if( err ) {
       RDLOG(@"libxml error level %i: %s", err->level, err->message);
       // TODO: set rdError properly
-      rdError = [[self genericError] retain];
+      rdError = [self genericError];
     }
     else {
-      rdError = [[self genericError] retain];
+      rdError = [self genericError];
     }
   }
   
@@ -109,11 +101,11 @@ NSString *const RDLinkedInResponseParserURLKey = @"RDLinkedInResponseParserURLKe
     }
     
     if( nodeType == XML_READER_TYPE_END_ELEMENT || forceEndElement ) {
-      child = [element retain];
+      child = element;
       [elementStack removeLastObject];
       //RDLOG(@"popped node %@", child);
       
-      key = [[child objectForKey:@"#name"] retain];
+      key = [child objectForKey:@"#name"];
       text = [element objectForKey:@"#text"];
       [child removeObjectForKey:@"#name"];
       
@@ -155,15 +147,12 @@ NSString *const RDLinkedInResponseParserURLKey = @"RDLinkedInResponseParserURLKe
         }
         else {
           if( [text length] == 0 ) [child removeObjectForKey:@"#text"];
-          rdResults = [child retain];
+          rdResults = child;
         }
       }
-      [child release];
-      [key release];
     }
   }
   
-  [elementStack release];
   return !rdError;
 }
 
@@ -178,7 +167,7 @@ NSString *const RDLinkedInResponseParserURLKey = @"RDLinkedInResponseParserURLKe
     }
     
     if( !(success = [self parseInternal]) ) {
-      if( error ) *error = rdError ? [[rdError retain] autorelease]
+      if( error ) *error = rdError ? rdError
                                    : [self genericError];
     }
     
@@ -191,7 +180,7 @@ NSString *const RDLinkedInResponseParserURLKey = @"RDLinkedInResponseParserURLKe
 
 - (id)results {
   if( !rdReader && rdResults ) {
-    return [[rdResults retain] autorelease];
+    return rdResults;
   }
   return nil;
 }

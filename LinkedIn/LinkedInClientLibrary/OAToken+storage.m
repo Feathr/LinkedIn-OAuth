@@ -33,7 +33,7 @@
   NSString *secret = [[NSUserDefaults standardUserDefaults] stringForKey:[self rd_defaultsKeyForSecretWithProviderName:provider prefix:prefix]];
   
   if( [key length] > 0 && [secret length] > 0 ) {
-    token = [[[OAToken alloc] initWithKey:key secret:secret] autorelease];
+    token = [[OAToken alloc] initWithKey:key secret:secret];
   }
   return token;
 }
